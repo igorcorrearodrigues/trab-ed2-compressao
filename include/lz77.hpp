@@ -6,17 +6,17 @@
 #include <ostream>
 #include <istream>
 
-struct MyTuple
+struct Lz77Code
 {
     size_t p;
     size_t l;
     char c;
 };
 
-std::ostream& operator<<(std::ostream& out, const MyTuple& t);
-std::istream& operator>>(std::istream& in, MyTuple& t);
+std::ostream& operator<<(std::ostream& out, const Lz77Code& t);
+std::istream& operator>>(std::istream& in, Lz77Code& t);
 
-std::list<MyTuple> lz77_encode(const std::string& s);
-std::string lz77_decode(const std::list<MyTuple>& code);
+std::list<Lz77Code> lz77_encode(const std::string& s);
+std::string lz77_decode(const std::list<Lz77Code>& code);
 
 #endif // LZ77_HPP

@@ -3,12 +3,12 @@
 #define BUFF_MAX 4
 #define DICIO_MAX 8
 
-std::ostream& operator<<(std::ostream& out, const MyTuple& t)
+std::ostream& operator<<(std::ostream& out, const Lz77Code& t)
 {
     return out << "(" << t.p << "," << t.l << "," << t.c << ")";
 }
 
-std::istream& operator>>(std::istream& in, MyTuple& t)
+std::istream& operator>>(std::istream& in, Lz77Code& t)
 {
 	char c;
 
@@ -61,17 +61,17 @@ static size_t encontra_maior_sequencia(const std::string& dicionario, const std:
 	return 0;
 }
 
-std::list<MyTuple> lz77_encode(const std::string& s)
+std::list<Lz77Code> lz77_encode(const std::string& s)
 {
 	std::string buffer;
 	std::string dicionario;
-	std::list<MyTuple> code;
+	std::list<Lz77Code> code;
 
 	size_t i = 0;
 
 	while (i < s.length())
 	{
-		MyTuple t;
+		Lz77Code t;
 
 		if (i <= DICIO_MAX)
 			dicionario = s.substr(0, i);
@@ -98,7 +98,7 @@ std::list<MyTuple> lz77_encode(const std::string& s)
 	return code;
 }
 
-std::string lz77_decode(const std::list<MyTuple>& code)
+std::string lz77_decode(const std::list<Lz77Code>& code)
 {
 	std::string result = "";
 

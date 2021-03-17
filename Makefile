@@ -4,11 +4,19 @@ CC_FLAGS=-W -Wall -pedantic -std=c++11
 
 INC_DIR=./include
 
-MAIN_CPP=main.cpp ./src/lz77.cpp
+LZ77_CPP=./src/lz77.cpp
+LZ77_HPP=$(INC_DIR)/lz77.hpp
 
-MAIN_HPP=$(INC_DIR)/lz77.hpp
+ENCODE_CPP=encode.cpp $(LZ77_CPP)
+ENCODE_HPP=$(LZ77_HPP)
 
-build: main
+DECODE_CPP=decode.cpp $(LZ77_CPP)
+DECODE_HPP=$(LZ77_HPP)
 
-main: $(MAIN_CPP) $(MAIN_HPP)
-	$(CC) $(CC_FLAGS) -o $@ $(MAIN_CPP) -I $(INC_DIR) 
+build: encode decode
+
+encode: $(ENCODE_CPP) $(ENCODE_HPP)
+	$(CC) $(CC_FLAGS) -o $@ $(ENCODE_CPP) -I $(INC_DIR) 
+
+decode: $(DECODE_CPP) $(DECODE_HPP)
+	$(CC) $(CC_FLAGS) -o $@ $(DECODE_CPP) -I $(INC_DIR) 

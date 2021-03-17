@@ -1,3 +1,6 @@
+#ifndef MAIN_TEMPLATE_HPP
+#define MAIN_TEMPLATE_HPP
+
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -10,19 +13,15 @@
 
 void print_usage(const std::string& progname, std::ostream& out);
 
-int encode(std::istream& in, std::ostream& out);
-int decode(std::istream& in, std::ostream& out);
-
-int main(int argc, char *argv[])
+template<int (*action)(std::istream&, std::ostream&)>
+int main_template(int argc, char *argv[])
 {
-	int (*exec)(std::istream& in, std::ostream& out);
 	std::ostream *out_file_ptr = &std::cout;
 	std::istream *in_file_ptr = &std::cin;
 	char *out_file_name = nullptr;
 	char *in_file_name = nullptr;
 	char *progname = *argv;
 
-	exec = encode;
 
 	while (--argc > 0)
 	{
@@ -48,10 +47,6 @@ int main(int argc, char *argv[])
 			--argc;
 			out_file_name = *++argv;
 		}
-		else if (std::strcmp(cur_arg, "decode") == 0)
-			exec = decode;
-		else if (std::strcmp(cur_arg, "encode") == 0)
-			exec = encode;
 		else
 		{
 			print_usage(progname, std::cerr);
@@ -84,47 +79,12 @@ int main(int argc, char *argv[])
 		}
 		out_file_ptr = &outfile;
 	}
-	return exec(*in_file_ptr, *out_file_ptr);
-}
-
-int encode(std::istream& in, std::ostream& out)
-{
-	std::list<MyTuple> lista;
-	std::string str;
-	size_t i;
-
-	std::getline(in, str, (char) EOF);
-
-	lista = lz77_encode(str);
-
-	i = 0;
-
-	for (const auto& t : lista)
-	{
-		out << t;
-		if (++i != lista.size())
-			out << ' ';
-	}
-	out << "\n";
-
-	return 0;
-}
-
-int decode(std::istream& in, std::ostream& out)
-{
-	std::list<MyTuple> code;
-	std::string original;
-	MyTuple t;
-
-	while (in >> t)
-		code.push_back(t);
-
-	out << lz77_decode(code) << '\n';
-
-	return 0;
+	return action(*in_file_ptr, *out_file_ptr);
 }
 
 void print_usage(const std::string& progname, std::ostream& out)
 {
-	out << "Uso: " << progname << " [encode] [decode] [-i ARQUIVO_DE_ENTRADA] [-o ARQUIVO_DE_SAIDA]\n";
+	out << "Uso: " << progname << " [-i ARQUIVO_DE_ENTRADA] [-o ARQUIVO_DE_SAIDA]\n";
 }
+
+#endif // MAIN_TEMPLATE_HPP
