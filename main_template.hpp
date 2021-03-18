@@ -5,13 +5,37 @@
 #include <fstream>
 #include <cstring>
 
-#include "lz77.hpp"
-
 #define ERR_OPT_REQUIRES_ARG 1
 #define ERR_INVAL_ARGUMENT   2
 #define ERR_FILE_FAIL        3
 
-void print_usage(const std::string& progname, std::ostream& out);
+#define GET_FILE_NAME(file_name, option)                                  \
+	do                                                                    \
+	{                                                                     \
+		if (argc == 1)                                                    \
+		{                                                                 \
+			std::cerr << progname;                                        \
+			std::cerr << ": opção requer um argumento -- '" option "'\n"; \
+			return ERR_OPT_REQUIRES_ARG;                                  \
+		}                                                                 \
+		--argc;                                                           \
+		file_name = *++argv;                                              \
+	} while (0)
+
+#define OPEN_FILE(stream, file_name, file_ptr)                                             \
+	do                                                                                     \
+	{                                                                                      \
+		stream.open(file_name);                                                            \
+                                                                                           \
+		if (!stream.is_open())                                                             \
+		{                                                                                  \
+			std::cerr << progname << ": falha ao abrir o arquivo `" << file_name << "`\n"; \
+			return ERR_FILE_FAIL;                                                          \
+		}                                                                                  \
+		file_ptr = &stream;                                                                \
+	} while (0)
+
+inline void print_usage(const std::string& progname, std::ostream& out);
 
 template<int (*action)(std::istream&, std::ostream&)>
 int main_template(int argc, char *argv[])
@@ -22,31 +46,14 @@ int main_template(int argc, char *argv[])
 	char *in_file_name = nullptr;
 	char *progname = *argv;
 
-
 	while (--argc > 0)
 	{
-		char *cur_arg = *++argv;
+		++argv;
 
-		if (std::strcmp(cur_arg, "-i") == 0)
-		{
-			if (argc == 1)
-			{
-				std::cerr << progname << ": opção requer um argumento -- 'i'\n";
-				return ERR_OPT_REQUIRES_ARG;
-			}
-			--argc;
-			in_file_name = *++argv;
-		}
-		else if (std::strcmp(cur_arg, "-o") == 0)
-		{
-			if (argc == 1)
-			{
-				std::cerr << progname << ": opção requer um argumento -- 'o'\n";
-				return ERR_OPT_REQUIRES_ARG;
-			}
-			--argc;
-			out_file_name = *++argv;
-		}
+		if (std::strcmp(*argv, "-i") == 0)
+			GET_FILE_NAME(in_file_name, "i");
+		else if (std::strcmp(*argv, "-o") == 0)
+			GET_FILE_NAME(out_file_name, "o");	
 		else
 		{
 			print_usage(progname, std::cerr);
@@ -58,31 +65,14 @@ int main_template(int argc, char *argv[])
 	std::ifstream infile;
 
 	if (in_file_name)
-	{
-		infile.open(in_file_name);
-
-		if (!infile.is_open())
-		{
-			std::cerr << progname << ": falha ao abrir o arquivo `" << in_file_name << "`\n";
-			return ERR_FILE_FAIL;
-		}
-		in_file_ptr = &infile;
-	}
+		OPEN_FILE(infile, in_file_name, in_file_ptr);
 	if (out_file_name)
-	{
-		outfile.open(out_file_name);
+		OPEN_FILE(outfile, out_file_name, out_file_ptr);
 
-		if (!outfile.is_open())
-		{
-			std::cerr << progname << ": falha ao abrir o arquivo `" << out_file_name << "`\n";
-			return ERR_FILE_FAIL;
-		}
-		out_file_ptr = &outfile;
-	}
 	return action(*in_file_ptr, *out_file_ptr);
 }
 
-void print_usage(const std::string& progname, std::ostream& out)
+inline void print_usage(const std::string& progname, std::ostream& out)
 {
 	out << "Uso: " << progname << " [-i ARQUIVO_DE_ENTRADA] [-o ARQUIVO_DE_SAIDA]\n";
 }

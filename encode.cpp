@@ -1,4 +1,5 @@
 #include "main_template.hpp"
+#include "lz77.hpp"
 
 int encode(std::istream& in, std::ostream& out)
 {

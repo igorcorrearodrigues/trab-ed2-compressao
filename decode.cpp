@@ -1,4 +1,5 @@
 #include "main_template.hpp"
+#include "lz77.hpp"
 
 int decode(std::istream& in, std::ostream& out)
 {

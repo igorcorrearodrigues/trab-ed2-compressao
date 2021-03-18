@@ -8,10 +8,10 @@ LZ77_CPP=./src/lz77.cpp
 LZ77_HPP=$(INC_DIR)/lz77.hpp
 
 ENCODE_CPP=encode.cpp $(LZ77_CPP)
-ENCODE_HPP=$(LZ77_HPP)
+ENCODE_HPP=main_template.hpp $(LZ77_HPP)
 
 DECODE_CPP=decode.cpp $(LZ77_CPP)
-DECODE_HPP=$(LZ77_HPP)
+DECODE_HPP=main_template.hpp $(LZ77_HPP)
 
 build: encode decode
 
