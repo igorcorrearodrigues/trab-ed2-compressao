@@ -26,7 +26,7 @@ std::istream& operator>>(std::istream& in, Lz77Code& t)
 	return in;
 }
 
-bool verifica_no_dicionario(const std::string& dicionario,
+static bool verifica_no_dicionario(const std::string& dicionario,
 							const std::string& str, size_t& pos_ref)
 {
 	size_t pos = 0;
